@@ -23,7 +23,6 @@
         <div class="divTableRow">
             <div class="divTableHead">순위</div>
             <div class="divTableHead">제목</div>
-            <div class="divTableHead">평점</div>
             <div class="divTableHead">개봉일</div>
         </div>
     </div>
@@ -35,8 +34,6 @@
             <div class="divTableCell"><%=CmmUtil.nvl(rDTO.getMovieRank())%>
             </div>
             <div class="divTableCell"><%=CmmUtil.nvl(rDTO.getMovieNm())%>
-            </div>
-            <div class="divTableCell"><%=CmmUtil.nvl(rDTO.getScore())%>
             </div>
             <div class="divTableCell"><%=CmmUtil.nvl(rDTO.getOpenDay())%>
             </div>
