@@ -21,9 +21,6 @@ import java.util.Map;
 @Service
 public class WeatherService implements IWeatherService {
 
-    @Value("${weather.api.key}")
-    private String apiKey;
-
     @Cacheable(cacheNames = "weather",
             keyGenerator = "latLonKeyGen",
             sync = true)
@@ -35,7 +32,7 @@ public class WeatherService implements IWeatherService {
         String lat = CmmUtil.nvl(pDTO.getLat());
         String lon = CmmUtil.nvl(pDTO.getLon());
 
-        String apiParam = "?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=metric";
+        String apiParam = "?latitude=" + lat + "&longitude=" + lon + "&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,weather_code&hourly=temperature_2m&current=temperature_2m,precipitation,weather_code&timezone=auto&timeformat=unixtime";
         log.info("apiParam {}", apiParam);
 
         String json = NetworkUtil.get(IWeatherService.apiURL + apiParam);
@@ -48,39 +45,31 @@ public class WeatherService implements IWeatherService {
         // 현재 날씨 정보를 가지고 있는 current 키의 값 가져오기
         Map<String, Double> current = (Map<String, Double>) rMap.get("current");
 
-        double currnetTemp = current.get("temp"); // 현재 기온
+        double currnetTemp = current.get("temperature_2m"); // 현재 기온
         log.info("현재 기온 : {}", currnetTemp);
 
         // 일별 날씨 조회(OpenAPI가 현재 날짜 기준으로 최대 7일까지 제공)
-        List<Map<String, Object>> dailyList = (List<Map<String, Object>>) rMap.get("daily");
+        Map<String, List<Number>> dailyMap = (Map<String, List<Number>>) rMap.get("daily");
 
         // 7일 동안의 날씨 정보를 저장할 데이터
         // OpenAPI로부터 필요한 정보만 가져와서, 처리하기 쉬운 JSON 구조로 변경에 활용
         List<WeatherDailyDTO> pList = new LinkedList<>();
 
-        for (Map<String, Object> dailyMap : dailyList) {
+        for (int i = 0; i < dailyMap.get("time").size(); i++) {
 
-            String day = DateUtil.getLongDateTime(dailyMap.get("dt"), "yyyy-MM-dd"); // 기준 날짜
-            String sunrise = DateUtil.getLongDateTime(dailyMap.get("sunrise")); // 해뜨는 시간
-            String sunset = DateUtil.getLongDateTime(dailyMap.get("sunset")); // 해지는 시간
-            String moonrise = DateUtil.getLongDateTime(dailyMap.get("moonrise")); // 달뜨는 시간
-            String moonset = DateUtil.getLongDateTime(dailyMap.get("moonset")); // 달지는 시간
+            String day = DateUtil.getLongDateTime(dailyMap.get("time").get(i), "yyyy-MM-dd"); // 기준 날짜
+            String sunrise = DateUtil.getLongDateTime(dailyMap.get("sunrise").get(i)); // 해뜨는 시간
+            String sunset = DateUtil.getLongDateTime(dailyMap.get("sunset").get(i)); // 해지는 시간
 
             log.info("-----------------------------------------");
             log.info("today : {}", day);
             log.info("해뜨는 시간 : {}", sunrise);
             log.info("해지는 시간 : {}", sunset);
-            log.info("달뜨는 시간 : {}", moonrise);
-            log.info("달지는 시간 : {}", moonset);
-
-            Map<String, Double> dailyTemp = (Map<String, Double>) dailyMap.get("temp");
 
             // 숫자형태보다 문자열 형태가 데이터처리하기 쉽기 때문에 Double형태를 문자열로 변경함
-            String dayTemp = String.valueOf(dailyTemp.get("day")); // 평균 기온
-            String dayTempMax = String.valueOf(dailyTemp.get("max")); // 최대 기온
-            String dayTempMin = String.valueOf(dailyTemp.get("min")); // 최저 기온
+            String dayTempMax = String.valueOf(dailyMap.get("temperature_2m_max").get(i)); // 최대 기온
+            String dayTempMin = String.valueOf(dailyMap.get("temperature_2m_min").get(i)); // 최저 기온
 
-            log.info("평균 기온 : {}", dayTemp);
             log.info("최고 기온 : {}", dayTempMax);
             log.info("최저 기온 : {}", dayTempMin);
 
@@ -89,9 +78,6 @@ public class WeatherService implements IWeatherService {
             wdDTO.setDay(day);
             wdDTO.setSunrise(sunrise);
             wdDTO.setSunset(sunset);
-            wdDTO.setMoonrise(moonrise);
-            wdDTO.setMoonset(moonset);
-            wdDTO.setDayTemp(dayTemp);
             wdDTO.setDayTempMax(dayTempMax);
             wdDTO.setDayTempMin(dayTempMin);
 

@@ -33,9 +33,6 @@
                             let day = daily.day; // 기준 일자
                             let sunrise = daily.sunrise; // 해뜨는 시간
                             let sunset = daily.sunset; // 해지는 시간
-                            let moonrise = daily.moonrise; // 달뜨는 시간
-                            let moonset = daily.moonset; // 달지는 시간
-                            let dayTemp = daily.dayTemp; // 평균 기온
                             let dayTempMax = daily.dayTempMax; // 최고 기온
                             let dayTempMin = daily.dayTempMin; // 최저 기온
 
@@ -43,9 +40,6 @@
                             $("#daily_weather").append("<div class=\"divTableCell\">" + day + " </div>");
                             $("#daily_weather").append("<div class=\"divTableCell\">" + sunrise + " </div>");
                             $("#daily_weather").append("<div class=\"divTableCell\">" + sunset + " </div>");
-                            $("#daily_weather").append("<div class=\"divTableCell\">" + moonrise + " </div>");
-                            $("#daily_weather").append("<div class=\"divTableCell\">" + moonset + " </div>");
-                            $("#daily_weather").append("<div class=\"divTableCell\">" + dayTemp + " </div>");
                             $("#daily_weather").append("<div class=\"divTableCell\">" + dayTempMax + " </div>");
                             $("#daily_weather").append("<div class=\"divTableCell\">" + dayTempMin + " </div>");
                             $("#daily_weather").append("</div>");
@@ -79,9 +73,6 @@
             <div class="divTableHead">날짜</div>
             <div class="divTableHead">해뜨는 시간</div>
             <div class="divTableHead">해지는 시간</div>
-            <div class="divTableHead">달뜨는 시간</div>
-            <div class="divTableHead">달지는 시간</div>
-            <div class="divTableHead">평균 기온</div>
             <div class="divTableHead">최고 기온</div>
             <div class="divTableHead">최저 기온</div>
         </div>
@@ -89,5 +80,9 @@
     <div class="divTableBody" id="daily_weather">
     </div>
 </div>
+<hr/>
+<footer>
+    이 페이지에서 제공되는 날씨 정보는 <a href="https://open-meteo.com">open-meteo</a>에서 제공하며, 데이터는 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0 라이선스</a>에 따라 사용되었습니다.
+</footer>
 </body>
 </html>
